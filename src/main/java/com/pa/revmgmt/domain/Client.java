@@ -1,9 +1,6 @@
 package com.pa.revmgmt.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -18,7 +15,6 @@ public class Client implements Serializable {
     @Column(nullable = false)
     private String name;
 
-    @Id
     @Size(max = 10, min=10)
     @NotNull
     private String phoneNumber;

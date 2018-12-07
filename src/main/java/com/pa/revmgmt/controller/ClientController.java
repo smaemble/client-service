@@ -7,31 +7,30 @@ import com.pa.revmgmt.repo.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 /**
  * Controller that exposes client details
  */
-
-@Controller
+@RestController
 @RequestMapping("/clients")
 public class ClientController {
 
     ClientRepository clientRepository;
-    AddressRepository addressRepository;
 
     protected ClientController(){}
 
     @Autowired
-    public ClientController(ClientRepository clientRepository, AddressRepository addressRepository) {
+    public ClientController(ClientRepository clientRepository) {
         this.clientRepository = clientRepository;
-        this.addressRepository = addressRepository;
     }
 
 
@@ -40,14 +39,18 @@ public class ClientController {
      *
      * @param newClient the client to be created
      */
-    @RequestMapping(method = RequestMethod.POST,
-            consumes = {MediaType.APPLICATION_JSON_VALUE})
+
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
-    public void createNewClient(@RequestBody @Validated Client newClient){
+    public ResponseEntity<Void> createNewClient(@RequestBody @Validated Client newClient){
         Client client = clientRepository.findByPhoneNumber(newClient.getPhoneNumber());
 
         if(client == null){
-            clientRepository.save(newClient);
+            int clientId = clientRepository.save(newClient).getId();
+            System.out.println("=======cclient ID: null cncncn cncncnc ========" + clientId);
+            URI location = ServletUriComponentsBuilder.fromCurrentRequest().path(
+                    "/{id}").buildAndExpand(clientId).toUri();
+            return ResponseEntity.created(location).build();
         }
         else{
             throw new RuntimeException("Client already exist " + client.toString());
@@ -60,8 +63,9 @@ public class ClientController {
      * @param clientId
      * @return client if found or exception otherwise
      */
-    @GetMapping("/{clientId}")
-    public Client getClient(@PathVariable(value="clientId") int clientId){
+    @GetMapping(path = "/{clientId}", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ResponseStatus(HttpStatus.OK)
+    public Client getClient(@PathVariable(value = "clientId") int clientId){
         return clientRepository.findById(clientId).orElseThrow(
                 () -> new NoSuchElementException("ClientId=" + clientId + " does not exit"));
     }
