@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
@@ -17,8 +18,9 @@ public class Client implements Serializable {
     @Column(nullable = false)
     private String name;
 
-    @Column
+    @Id
     @Size(max = 10, min=10)
+    @NotNull
     private String phoneNumber;
 
     @Column(nullable = false)
@@ -74,5 +76,16 @@ public class Client implements Serializable {
 
     public void setClientType(ClientType clientType) {
         this.clientType = clientType;
+    }
+
+    @Override
+    public String toString() {
+        return "Client{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", contactName='" + contactName + '\'' +
+                ", clientType=" + clientType +
+                '}';
     }
 }

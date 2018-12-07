@@ -1,4 +1,7 @@
 package com.pa.revmgmt.repo;
 
-public class AddressRepository {
+import com.pa.revmgmt.domain.Address;
+import org.springframework.data.repository.CrudRepository;
+
+public interface AddressRepository extends CrudRepository<Address, Integer> {
 }
